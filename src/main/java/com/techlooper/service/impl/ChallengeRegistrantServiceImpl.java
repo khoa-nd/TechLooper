@@ -20,7 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.FilteredQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -161,8 +164,8 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
         Set<ChallengeRegistrantDto> registrants = StreamUtils.createStreamFromIterator(challengeRegistrantRepository.search(challengeQuery).iterator())
                 .map(registrant -> {
                     ChallengeRegistrantDto dto = dozerMapper.map(registrant, ChallengeRegistrantDto.class);
-                    BoolQueryBuilder submissionQuery = QueryBuilders.boolQuery()
-                            .must(QueryBuilders.termQuery("registrantId", registrant.getRegistrantId()))
+                    BoolQueryBuilder submissionQuery = boolQuery()
+                            .must(termQuery("registrantId", registrant.getRegistrantId()))
                             .must(submissionPhaseQuery);
                     List<ChallengeSubmissionDto> submissions = StreamUtils.createStreamFromIterator(challengeSubmissionRepository.search(submissionQuery).iterator())
                             .map(submission -> dozerMapper.map(submission, ChallengeSubmissionDto.class)).collect(toList());
@@ -238,7 +241,7 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
 
     @Override
     public ChallengeRegistrantDto rejectRegistrant(String ownerEmail, RejectRegistrantDto rejectRegistrantDto) {
-        Iterator<ChallengeRegistrantEntity> registrantIter = challengeRegistrantRepository.search(QueryBuilders.termQuery("registrantId", rejectRegistrantDto.getRegistrantId())).iterator();
+        Iterator<ChallengeRegistrantEntity> registrantIter = challengeRegistrantRepository.search(termQuery("registrantId", rejectRegistrantDto.getRegistrantId())).iterator();
         if (!registrantIter.hasNext()) return null;
 
         ChallengeRegistrantEntity registrant = registrantIter.next();
