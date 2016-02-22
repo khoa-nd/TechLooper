@@ -522,34 +522,28 @@ public class ChallengeEmailServiceImpl implements ChallengeEmailService {
         Optional<ChallengeRegistrantDto> thirdWinner = winners.stream().filter(
                 winner -> winner.getReward() == RewardEnum.THIRD_PLACE).findFirst();
 
-        if (result.contains(ChallengeEmailService.VAR_FIRST_WINNER_FIRST_NAME)
-                || result.contains(ChallengeEmailService.VAR_FIRST_WINNER_FULL_NAME)) {
-            if (firstWinner.isPresent()) {
-                String firstName = firstWinner.get().getRegistrantFirstName();
-                String lastName = firstWinner.get().getRegistrantLastName();
-                result = result.replace(ChallengeEmailService.VAR_FIRST_WINNER_FIRST_NAME, firstName);
-                result = result.replace(ChallengeEmailService.VAR_FIRST_WINNER_FULL_NAME, firstName + " " + lastName);
-            }
+        if (firstWinner.isPresent() && (result.contains(ChallengeEmailService.VAR_FIRST_WINNER_FIRST_NAME)
+                || result.contains(ChallengeEmailService.VAR_FIRST_WINNER_FULL_NAME))) {
+            String firstName = firstWinner.get().getRegistrantFirstName();
+            String lastName = firstWinner.get().getRegistrantLastName();
+            result = result.replace(ChallengeEmailService.VAR_FIRST_WINNER_FIRST_NAME, firstName);
+            result = result.replace(ChallengeEmailService.VAR_FIRST_WINNER_FULL_NAME, firstName + " " + lastName);
         }
 
-        if (result.contains(ChallengeEmailService.VAR_SECOND_WINNER_FIRST_NAME)
-                || result.contains(ChallengeEmailService.VAR_SECOND_WINNER_FULL_NAME)) {
-            if (secondWinner.isPresent()) {
-                String firstName = secondWinner.get().getRegistrantFirstName();
-                String lastName = secondWinner.get().getRegistrantLastName();
-                result = result.replace(ChallengeEmailService.VAR_SECOND_WINNER_FIRST_NAME, firstName);
-                result = result.replace(ChallengeEmailService.VAR_SECOND_WINNER_FULL_NAME, firstName + " " + lastName);
-            }
+        if (secondWinner.isPresent() && (result.contains(ChallengeEmailService.VAR_SECOND_WINNER_FIRST_NAME)
+                || result.contains(ChallengeEmailService.VAR_SECOND_WINNER_FULL_NAME))) {
+            String firstName = secondWinner.get().getRegistrantFirstName();
+            String lastName = secondWinner.get().getRegistrantLastName();
+            result = result.replace(ChallengeEmailService.VAR_SECOND_WINNER_FIRST_NAME, firstName);
+            result = result.replace(ChallengeEmailService.VAR_SECOND_WINNER_FULL_NAME, firstName + " " + lastName);
         }
 
-        if (result.contains(ChallengeEmailService.VAR_THIRD_WINNER_FIRST_NAME)
-                || result.contains(ChallengeEmailService.VAR_THIRD_WINNER_FULL_NAME)) {
-            if (thirdWinner.isPresent()) {
-                String firstName = thirdWinner.get().getRegistrantFirstName();
-                String lastName = thirdWinner.get().getRegistrantLastName();
-                result = result.replace(ChallengeEmailService.VAR_THIRD_WINNER_FIRST_NAME, firstName);
-                result = result.replace(ChallengeEmailService.VAR_THIRD_WINNER_FULL_NAME, firstName + " " + lastName);
-            }
+        if (thirdWinner.isPresent() && (result.contains(ChallengeEmailService.VAR_THIRD_WINNER_FIRST_NAME)
+                || result.contains(ChallengeEmailService.VAR_THIRD_WINNER_FULL_NAME))) {
+            String firstName = thirdWinner.get().getRegistrantFirstName();
+            String lastName = thirdWinner.get().getRegistrantLastName();
+            result = result.replace(ChallengeEmailService.VAR_THIRD_WINNER_FIRST_NAME, firstName);
+            result = result.replace(ChallengeEmailService.VAR_THIRD_WINNER_FULL_NAME, firstName + " " + lastName);
         }
 
         return result;
