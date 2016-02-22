@@ -299,8 +299,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
         challenge.setVisibleWinners(challengeDetailDto.getVisibleWinners());
         challenge = challengeRepository.save(challenge);
-        challengeDetailDto = dozerMapper.map(challenge, ChallengeDetailDto.class);
-        return challengeDetailDto;
+        ChallengeDetailDto visibleChallengeDetailDto = dozerMapper.map(challenge, ChallengeDetailDto.class);
+        return visibleChallengeDetailDto;
     }
 
     private NativeSearchQueryBuilder getChallengeSearchQueryBuilder(ChallengeFilterCondition challengeFilterCondition) {
