@@ -213,11 +213,11 @@ public class ChallengeController {
     @RequestMapping(value = "challenge/updateVisibleWinner", method = RequestMethod.PUT)
     public ChallengeDetailDto updateVisibleWinner(@RequestBody ChallengeDetailDto challengeDetailDto, HttpServletRequest request, HttpServletResponse response) {
         UserProfileDto signinUser = userController.getUserProfile(request);
-        challengeDetailDto = challengeService.updateVisibleWinner(challengeDetailDto, signinUser.getEmail());
-        if (challengeDetailDto == null) {
+        ChallengeDetailDto visibleChallengeDetailDto = challengeService.updateVisibleWinner(challengeDetailDto, signinUser.getEmail());
+        if (visibleChallengeDetailDto == null) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-        return challengeDetailDto;
+        return visibleChallengeDetailDto;
     }
 
     @RequestMapping(value = "challenge/saveDraftRegistrant", method = RequestMethod.POST)
@@ -226,7 +226,7 @@ public class ChallengeController {
         if (draft == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        return  draft;
+        return draft;
     }
 
     @RequestMapping(value = "challenge/draftRegistrant/{id}", method = RequestMethod.GET)
