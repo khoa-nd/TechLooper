@@ -80,7 +80,7 @@ public class ChallengeSubmissionServiceImpl implements ChallengeSubmissionServic
         ChallengeEntity challenge = challengeService.findChallengeById(challengeId);
         ChallengeRegistrantEntity registrant = challengeRegistrantService.findRegistrantByChallengeIdAndEmail(challengeId, registrantEmail, null);
         final Long registrantId = registrant.getRegistrantId();
-        ChallengePhaseEnum activePhase = registrant.getActivePhase() == null ? ChallengePhaseEnum.REGISTRATION : registrant.getActivePhase();
+        ChallengePhaseEnum activePhase = registrant.getActivePhase() == null ? REGISTRATION : registrant.getActivePhase();
 
         ChallengeSubmissionEntity challengeSubmissionEntity = dozerMapper.map(challengeSubmissionDto, ChallengeSubmissionEntity.class);
         ChallengeSubmissionEntityBuilder.challengeSubmissionEntity(challengeSubmissionEntity)
