@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -26,10 +27,10 @@ public class JobTitleNormalizerTest {
 
     private static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"Java Developer", Arrays.asList("Java Developer", "Java Application Developer"), "Java Developer"},
-                {"04 Java Developer", Arrays.asList("Java Developer", "Java Application Developer"), "Java Developer"},
-                {"Java Developer with High Salary", Arrays.asList("Java Developer", "Java Application Developer"), "Java Developer"},
-                {"Java Developer with Salary 1500-2000 ", Arrays.asList("Java Application Developer", "Java Developer"), "Java Application Developer"}
+                {"Java Developer", Arrays.asList("Java Developer", "Senior Java PLSQL Developer", "Senior Java Scala Developer"), "Java Developer"},
+                {"04 Java Developer", Arrays.asList("Java Developer", "Senior Java PLSQL Developer", "Senior Java Scala Developer"), "Java Developer"},
+                {"Java Developer with High Salary", Collections.emptyList(), "Java Developer with High Salary"},
+                {"Java Developer with Salary 1500-2000", Arrays.asList("Java Developer", "Senior Java PLSQL Developer", "Senior Java Scala Developer"), "Java Developer"}
         });
     }
 

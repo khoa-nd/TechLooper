@@ -19,6 +19,6 @@ public class JobTitleNormalizer implements Normalizer<String, String> {
     @Override
     public String normalize(String inputJobTitle) {
         List<String> jobTitleCandidates = suggestionService.searchJobTitles(inputJobTitle);
-        return jobTitleCandidates.isEmpty() ? null : jobTitleCandidates.get(0);
+        return jobTitleCandidates.isEmpty() ? inputJobTitle : jobTitleCandidates.get(0);
     }
 }
