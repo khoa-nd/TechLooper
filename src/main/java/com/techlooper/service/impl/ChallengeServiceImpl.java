@@ -114,7 +114,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         //save new registrant
-        ChallengeRegistrantEntity registrant = dozerMapper.map(challengeRegistrantDto, ChallengeRegistrantEntity.class);;
+        ChallengeRegistrantEntity registrant = dozerMapper.map(challengeRegistrantDto, ChallengeRegistrantEntity.class);
         registrant.setRegistrantId(DateTimeUtils.currentDateTime());
 
         HashSet<ChallengeRegistrantCriteria> criteria = new HashSet<>();
