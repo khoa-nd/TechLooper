@@ -3,12 +3,16 @@ package com.techlooper.entity;
 import com.techlooper.model.ChallengePhaseEnum;
 import com.techlooper.model.Language;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.springframework.data.elasticsearch.annotations.FieldType.Boolean;
+import static org.springframework.data.elasticsearch.annotations.FieldType.*;
 import static org.springframework.data.elasticsearch.annotations.FieldType.Double;
 import static org.springframework.data.elasticsearch.annotations.FieldType.Integer;
 import static org.springframework.data.elasticsearch.annotations.FieldType.Long;
@@ -53,7 +57,7 @@ public class ChallengeRegistrantEntity {
     @Field(type = String, index = FieldIndex.not_analyzed)
     private String disqualifiedReason;
 
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd/MM/yyyy HH:mm")
+    @Field(type = Date, format = DateFormat.custom, pattern = "dd/MM/yyyy HH:mm")
     private String lastEmailSentDateTime;
 
     @Field(type = Integer)
@@ -62,10 +66,10 @@ public class ChallengeRegistrantEntity {
     @Field(type = String, index = FieldIndex.not_analyzed)
     private ChallengePhaseEnum activePhase;
 
-    @Field(type = FieldType.Nested)
+    @Field(type = Nested)
     private Set<ChallengeRegistrantCriteria> criteria;
 
-    @Field(type = FieldType.Integer)
+    @Field(type = Integer)
     private Integer passCode;
 
     public java.lang.String getRegistrantInternalEmail() {
