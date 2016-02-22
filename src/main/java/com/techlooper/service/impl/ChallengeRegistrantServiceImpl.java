@@ -143,17 +143,17 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
             return findWinnerRegistrantsByChallengeId(challengeId);
         }
 
-        BoolQueryBuilder challengeQuery = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("challengeId", challengeId));
-        BoolQueryBuilder activePhaseQuery = QueryBuilders.boolQuery();
-        BoolQueryBuilder submissionPhaseQuery = QueryBuilders.boolQuery().should(QueryBuilders.termQuery("submissionPhase", phase));
+        BoolQueryBuilder challengeQuery = boolQuery().must(termQuery("challengeId", challengeId));
+        BoolQueryBuilder activePhaseQuery = boolQuery();
+        BoolQueryBuilder submissionPhaseQuery = boolQuery().should(termQuery("submissionPhase", phase));
         challengeQuery.must(activePhaseQuery);
 
         if (phase == REGISTRATION) {
-            activePhaseQuery.should(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.missingFilter("activePhase")));
-            submissionPhaseQuery.should(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.missingFilter("submissionPhase")));
+            activePhaseQuery.should(filteredQuery(matchAllQuery(), missingFilter("activePhase")));
+            submissionPhaseQuery.should(filteredQuery(matchAllQuery(), missingFilter("submissionPhase")));
         }
         for (int i = ALL_CHALLENGE_PHASES.length - 1; i >= 0; i--) {
-            activePhaseQuery.should(QueryBuilders.termQuery("activePhase", ALL_CHALLENGE_PHASES[i]));
+            activePhaseQuery.should(termQuery("activePhase", ALL_CHALLENGE_PHASES[i]));
 //      submissionPhaseQuery.should(QueryBuilders.termQuery("submissionPhase", ALL_CHALLENGE_PHASES[i]));
             if (phase == ALL_CHALLENGE_PHASES[i]) break;
         }
@@ -165,7 +165,7 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
                             .must(QueryBuilders.termQuery("registrantId", registrant.getRegistrantId()))
                             .must(submissionPhaseQuery);
                     List<ChallengeSubmissionDto> submissions = StreamUtils.createStreamFromIterator(challengeSubmissionRepository.search(submissionQuery).iterator())
-                            .map(submission -> dozerMapper.map(submission, ChallengeSubmissionDto.class)).collect(Collectors.toList());
+                            .map(submission -> dozerMapper.map(submission, ChallengeSubmissionDto.class)).collect(toList());
                     dto.setSubmissions(submissions);
                     return dto;
                 }).collect(Collectors.toSet());
@@ -175,12 +175,12 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
 
     public Set<ChallengeRegistrantDto> findWinnerRegistrantsByChallengeId(Long challengeId) {
         ChallengeEntity challenge = challengeRepository.findOne(challengeId);
-        FilteredQueryBuilder winnerQuery = QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
-                FilterBuilders.boolFilter()
-                        .must(FilterBuilders.existsFilter("criteria.score"))
-                        .must(FilterBuilders.termFilter("challengeId", challengeId))
-                        .must(FilterBuilders.termFilter("activePhase", FINAL))
-                        .mustNot(FilterBuilders.termFilter("disqualified", Boolean.TRUE)));
+        FilteredQueryBuilder winnerQuery = filteredQuery(matchAllQuery(),
+                boolFilter()
+                        .must(existsFilter("criteria.score"))
+                        .must(termFilter("challengeId", challengeId))
+                        .must(termFilter("activePhase", FINAL))
+                        .mustNot(termFilter("disqualified", Boolean.TRUE)));
 
         Set<ChallengeRegistrantDto> registrants = StreamUtils.createStreamFromIterator(challengeRegistrantRepository.search(winnerQuery).iterator())
                 .map(registrant -> {
@@ -190,8 +190,8 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
                         dto.setReward(winner.get().getReward());
                     }
 
-                    BoolQueryBuilder submissionQuery = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("registrantId", registrant.getRegistrantId()))
-                            .must(QueryBuilders.termQuery("submissionPhase", FINAL));
+                    BoolQueryBuilder submissionQuery = boolQuery().must(termQuery("registrantId", registrant.getRegistrantId()))
+                            .must(termQuery("submissionPhase", FINAL));
                     List<ChallengeSubmissionDto> submissions = StreamUtils.createStreamFromIterator(challengeSubmissionRepository.search(submissionQuery).iterator())
                             .map(submission -> dozerMapper.map(submission, ChallengeSubmissionDto.class)).collect(Collectors.toList());
                     dto.setSubmissions(submissions);
@@ -286,7 +286,7 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
     @Override
     public Long getNumberOfRegistrants(Long challengeId) {
         NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder().withSearchType(SearchType.COUNT);
-        searchQueryBuilder.withFilter(FilterBuilders.termFilter("challengeId", challengeId));
+        searchQueryBuilder.withFilter(termFilter("challengeId", challengeId));
         return challengeRegistrantRepository.search(searchQueryBuilder.build()).getTotalElements();
     }
 
@@ -322,8 +322,8 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
     public ChallengeRegistrantEntity findRegistrantByChallengeIdAndEmail(Long challengeId, String email, String internalEmail) {
         NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder().withTypes("challengeRegistrant");
         BoolQueryBuilder query = boolQuery()
-          .must(termQuery("registrantEmail", email))
-          .must(termQuery("challengeId", challengeId));
+                .must(termQuery("registrantEmail", email))
+                .must(termQuery("challengeId", challengeId));
         if (org.springframework.util.StringUtils.hasText(internalEmail)) {
             query.must(termQuery("registrantInternalEmail", internalEmail));
         }
@@ -339,8 +339,8 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
     public ChallengeRegistrantEntity findRegistrantByChallengeIdAndInternalEmail(Long challengeId, String internalEmail) {
         NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder().withTypes("challengeRegistrant");
         BoolQueryBuilder query = boolQuery()
-          .must(matchQuery("registrantInternalEmail", internalEmail).operator(MatchQueryBuilder.Operator.AND))
-          .must(termQuery("challengeId", challengeId));
+                .must(matchQuery("registrantInternalEmail", internalEmail).operator(MatchQueryBuilder.Operator.AND))
+                .must(termQuery("challengeId", challengeId));
         searchQueryBuilder.withQuery(query);
         List<ChallengeRegistrantEntity> registrantEntities = DataUtils.getAllEntities(challengeRegistrantRepository, searchQueryBuilder);
         if (!registrantEntities.isEmpty()) {
@@ -354,8 +354,8 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
 
         NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder().withTypes("draftRegistrant");
         BoolQueryBuilder query = boolQuery()
-          .must(termQuery("registrantEmail", email))
-          .must(termQuery("challengeId", challengeId));
+                .must(termQuery("registrantEmail", email))
+                .must(termQuery("challengeId", challengeId));
         if (org.springframework.util.StringUtils.hasText(internalEmail)) {
             query.must(termQuery("registrantInternalEmail", internalEmail));
         }
@@ -438,7 +438,7 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
             ChallengeEntity challengeEntity = challengeService.findChallengeById(challengeId);
 
             boolean isChallengeSelected = challengeEntity != null &&
-                    (challengeEntity.getExpired() == null || challengeEntity.getExpired() == false) &&
+                    (challengeEntity.getExpired() == null || !challengeEntity.getExpired()) &&
                     isPhaseMatching(challengeEntity, registrantEntity, criteria.getJobSeekerPhase());
 
             if (isChallengeSelected) {
@@ -598,7 +598,7 @@ public class ChallengeRegistrantServiceImpl implements ChallengeRegistrantServic
             ChallengeEntity challengeEntity = challengeService.findChallengeById(challengeId);
 
             boolean isChallengeSelected = challengeEntity != null &&
-                    (challengeEntity.getExpired() == null || challengeEntity.getExpired() == false);
+                    (challengeEntity.getExpired() == null || !challengeEntity.getExpired());
 
             if (isChallengeSelected) {
                 for (JobSeekerPhaseEnum phase : JobSeekerPhaseEnum.values()) {
