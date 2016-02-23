@@ -10,12 +10,14 @@ import java.util.Set;
  */
 public class SalaryReviewJobRepository {
 
-    private static final int UPPER_LIMIT = 10;
+    private static final int LOWER_LIMIT_FOR_EACH_SEARCH_STRATEGY = 10;
+
+    private static final int LIMIT_FOR_JOB_REPOSITORY = 1000;
 
     private Set<JobEntity> jobs = new HashSet<>();
 
     public boolean isEnough() {
-        return jobs.size() > UPPER_LIMIT;
+        return jobs.size() > LOWER_LIMIT_FOR_EACH_SEARCH_STRATEGY;
     }
 
     public boolean isNotEnough() {
@@ -35,7 +37,9 @@ public class SalaryReviewJobRepository {
     }
 
     public void addStrategy(JobSearchStrategy strategy) {
-        jobs.addAll(strategy.searchJob());
+        if (jobs.size() < LIMIT_FOR_JOB_REPOSITORY) {
+            jobs.addAll(strategy.searchJob());
+        }
     }
 
 }
